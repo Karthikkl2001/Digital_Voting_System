@@ -1,0 +1,1143 @@
+
+#include <Adafruit_Fingerprint.h>
+#include<SoftwareSerial.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+uint8_t id;
+int x;
+int y;
+int sw11=6;
+int sw22=7;
+
+SoftwareSerial mySerial(4,5);  
+//SoftwareSerial mySerial(10,11);      //RX ,TX
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+int sw1=A0;
+int sw2=A1;
+int sw3=A2; 
+int sw4=A3;
+int buzzer=3;
+//int rssw=8;
+int a,b,c,d,i,j,k,l;
+int e,f,g,h;
+//int p=0;
+int q,r,s,t,u,v;
+char str[15];
+int count=0;
+//int i=0;
+int flag=0;
+int z;
+
+
+
+void setup()
+{
+ lcd.init();
+ lcd.backlight();
+ lcd.clear();
+  pinMode(buzzer,OUTPUT);
+  digitalWrite(buzzer,0);
+  pinMode(sw1,INPUT);
+  pinMode(sw2,INPUT);
+  pinMode(sw3,INPUT);
+  pinMode(sw4,INPUT);
+//  pinMode(rssw,INPUT);
+  digitalWrite(sw1,1);
+  digitalWrite(sw2,1);
+  digitalWrite(sw3,1);
+  digitalWrite(sw4,1);
+   wifi_init();
+
+
+//------------------------------------------------------------------------
+
+
+ // Serial.begin(9600);
+  while (!Serial);  // For Yun/Leo/Micro/Zero/...
+  delay(100);
+  Serial.println("\n\nAdafruit Fingerprint sensor enrollment");
+
+  // set the data rate for the sensor serial port
+  finger.begin(57600);
+
+  if (finger.verifyPassword()) {
+    Serial.println("Found fingerprint sensor!");
+  } else {
+    Serial.println("Did not find fingerprint sensor :(");
+   // while (1) { delay(1); }
+  }
+
+  Serial.println(F("Reading sensor parameters"));
+  finger.getParameters();
+//  Serial.print(F("Status: 0x")); Serial.println(finger.status_reg, HEX);
+//  Serial.print(F("Sys ID: 0x")); Serial.println(finger.system_id, HEX);
+//  Serial.print(F("Capacity: ")); Serial.println(finger.capacity);
+//  Serial.print(F("Security level: ")); Serial.println(finger.security_level);
+//  Serial.print(F("Device address: ")); Serial.println(finger.device_addr, HEX);
+//  Serial.print(F("Packet len: ")); Serial.println(finger.packet_len);
+//  Serial.print(F("Baud rate: ")); Serial.println(finger.baud_rate);
+}
+
+uint8_t readnumber(void) {
+  uint8_t num = 0;
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("CONVIENIENT VOTING ");
+    lcd.setCursor(0, 1);
+    lcd.print("     SYSTEM"); 
+//  while (num == 0) {
+//    while (! Serial.available());
+//    num = Serial.parseInt();
+//  }
+  return num;
+}
+//===============================================================LOOP===================================================//
+void loop() 
+{
+     iot();
+     delay(10000);
+     iot2();
+// iot();
+//  if(digitalRead(sw11)==0)
+//   {
+//    lcd.clear();
+//    lcd.setCursor(0, 0);
+//    lcd.print("REGISTER YOUR ");
+//    lcd.setCursor(0, 1);
+//    lcd.print("   FINGER"); 
+//    //enrol();
+//    }
+//    else 
+//    {
+      finger1();
+  //  }
+
+     
+}
+// void enrol()
+//{
+//  Serial.println(F("ENROLLL"));
+//  Serial.println(F("Ready to enroll a fingerprint!"));
+//  Serial.println(F("Please type in the ID # (from 1 to 127) you want to save this finger as..."));
+//  id = readnumber();
+//  if (id == 0) {// ID #0 not allowed, try again!
+//     return;
+//  }
+//  Serial.print("Enrolling ID #");
+//  Serial.println(id);
+//  
+//  while (!  getFingerprintEnroll() );
+//}
+//
+//uint8_t getFingerprintEnroll() {
+//
+//  int p = -1;
+//  Serial.print("Waiting for valid finger to enroll as #"); 
+//  Serial.println(id);
+//  while (p != FINGERPRINT_OK) {
+//    p = finger.getImage();
+//    switch (p) {
+//    case FINGERPRINT_OK:
+//      Serial.println(F("Image taken"));
+//      break;
+//    case FINGERPRINT_NOFINGER:
+//      Serial.println(F("."));
+//      break;
+//    case FINGERPRINT_PACKETRECIEVEERR:
+//      Serial.println(F("Communication error"));
+//      break;
+//    case FINGERPRINT_IMAGEFAIL:
+//      Serial.println(F("Imaging error"));
+//      break;
+//    default:
+//      Serial.println(F("Unknown error"));
+//      break;
+//    }
+//  }
+//
+//  // OK success!
+//
+//  p = finger.image2Tz(1);
+//  switch (p) {
+//    case FINGERPRINT_OK:
+//      Serial.println(F("Image converted"));
+//      break;
+//    case FINGERPRINT_IMAGEMESS:
+//      Serial.println(F("Image too messy"));
+//      return p;
+//    case FINGERPRINT_PACKETRECIEVEERR:
+//      Serial.println(F("Communication error"));
+//      return p;
+//    case FINGERPRINT_FEATUREFAIL:
+//      Serial.println(F("Could not find fingerprint features"));
+//      return p;
+//    case FINGERPRINT_INVALIDIMAGE:
+//      Serial.println(F("Could not find fingerprint features"));
+//      return p;
+//    default:
+//      Serial.println(F("Unknown error"));
+//      return p;
+//  }
+//  
+//  Serial.println(F("Remove finger"));
+//  delay(2000);
+//  p = 0;
+//  while (p != FINGERPRINT_NOFINGER) 
+//  {
+//    p = finger.getImage();
+//  }
+//  Serial.print("ID "); 
+//  Serial.println(id);
+//  p = -1;
+//  Serial.println(F("Place same finger again"));
+//  while (p != FINGERPRINT_OK) {
+//    p = finger.getImage();
+//    switch (p) {
+//    case FINGERPRINT_OK:
+//      Serial.println(F("Image taken"));
+//      break;
+//    case FINGERPRINT_NOFINGER:
+//      Serial.print(".");
+//      break;
+//    case FINGERPRINT_PACKETRECIEVEERR:
+//      Serial.println(F("Communication error"));
+//      break;
+//    case FINGERPRINT_IMAGEFAIL:
+//      Serial.println(F("Imaging error"));
+//      break;
+//    default:
+//      Serial.println(F("Unknown error"));
+//      break;
+//    }
+//  }
+//
+//  // OK success!
+//
+//  p = finger.image2Tz(2);
+//  switch (p) {
+//    case FINGERPRINT_OK:
+//      Serial.println(F("Image converted"));
+//      break;
+//    case FINGERPRINT_IMAGEMESS:
+//      Serial.println(F("Image too messy"));
+//      return p;
+//    case FINGERPRINT_PACKETRECIEVEERR:
+//      Serial.println(F("Communication error"));
+//      return p;
+//    case FINGERPRINT_FEATUREFAIL:
+//      Serial.println(F("Could not find fingerprint features"));
+//      return p;
+//    case FINGERPRINT_INVALIDIMAGE:
+//      Serial.println(F("Could not find fingerprint features"));
+//      return p;
+//    default:
+//      Serial.println(F("Unknown error"));
+//      return p;
+//  }
+//  
+//  // OK converted!
+//  Serial.print("Creating model for #");  
+//  Serial.println(id);
+//  
+//  p = finger.createModel();
+//  if (p == FINGERPRINT_OK) {
+//    Serial.println(F("Prints matched!"));
+//  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
+//    Serial.println(F("Communication error"));
+//    return p;
+//  } else if (p == FINGERPRINT_ENROLLMISMATCH) {
+//    Serial.println(F("Fingerprints did not match"));
+//    return p;
+//  } else {
+//    Serial.println(F("Unknown error"));
+//    return p;
+//  }   
+//  
+//  Serial.print("ID "); Serial.println(id);
+//  p = finger.storeModel(id);
+//  if (p == FINGERPRINT_OK) {
+//    Serial.println(F("Stored!"));
+//  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
+//    Serial.println(F("Communication error"));
+//    return p;
+//  } else if (p == FINGERPRINT_BADLOCATION) {
+//    Serial.println(F("Could not store in that location"));
+//    return p;
+//  } else if (p == FINGERPRINT_FLASHERR) {
+//    Serial.println(F("Error writing to flash"));
+//    return p;
+//  } else {
+//    Serial.println(F("Unknown error"));
+//    return p;
+//  }   
+//}
+
+
+void finger1()
+
+{
+ // Serial.println(F("finer..");
+   if(flag==1)
+  {
+    check();
+    flag=0;
+    i=0;
+    delay(1000);
+  }
+ if(z>=7)
+  {
+    a=a+1;
+    z=0;
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("  Unauthorised ");
+    lcd.setCursor(0, 1);
+    lcd.print("    Finger"); 
+    Serial.println(F("Unauthorised Finger.."));
+   digitalWrite(buzzer,1);
+     delay(2000);
+     digitalWrite(buzzer,0);
+     delay(1000);
+     digitalWrite(buzzer,1);
+     delay(2000);
+     digitalWrite(buzzer,0);
+
+  }
+  getFingerprintIDez();
+  delay(300);            //don't ned to run this at full speed.
+}
+
+uint8_t getFingerprintID() {
+  uint8_t p = finger.getImage();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println(F("Image taken"));
+      break;
+    case FINGERPRINT_NOFINGER:
+      Serial.println(F("No finger detected"));
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println(F("Communication error"));
+      return p;
+    case FINGERPRINT_IMAGEFAIL:
+      Serial.println(F("Imaging error"));
+      return p;
+    default:
+      Serial.println(F("Unknown error"));
+      return p;
+  }
+
+  // OK success!
+
+  p = finger.image2Tz();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println(F("Image converted"));
+      break;
+    case FINGERPRINT_IMAGEMESS:
+      Serial.println(F("Image too messy"));
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println(F("Communication error"));
+      return p;
+    case FINGERPRINT_FEATUREFAIL:
+      Serial.println(F("Could not find fingerprint features"));
+      return p;
+    case FINGERPRINT_INVALIDIMAGE:
+      Serial.println(F("Could not find fingerprint features"));
+      return p;
+    default:
+      Serial.println(F("Unknown error"));
+      return p;
+  }
+  
+  // OK converted!
+  p = finger.fingerFastSearch();
+  if (p == FINGERPRINT_OK)
+  {
+    Serial.println(F("Found a print match!"));
+  } 
+   else if (p == FINGERPRINT_PACKETRECIEVEERR) 
+   {
+    Serial.println(F("Communication error"));
+    return p;
+   } 
+    else if (p == FINGERPRINT_NOTFOUND) 
+   {
+    Serial.println(F("Did not find a match"));
+    return p;
+   } 
+  else
+  {
+    //Serial.println(F("Unknown error"));
+    return p;
+  }   
+  
+  // found a match!
+  Serial.print("Found ID #"); 
+  Serial.print(finger.fingerID); 
+//  Serial.print(" with confidence of "); Serial.println(F(finger.confidence); 
+
+  return finger.fingerID;
+ }
+
+
+int getFingerprintIDez()
+{
+  
+
+  lcd.clear();
+    lcd.print("   PLACE YOUR  ");
+     lcd.setCursor(0,1);
+    lcd.print(" FINGER TO VOTE");
+  uint8_t p = finger.getImage();
+   if(p==0)
+  {
+   z++;
+   Serial.print("z=");
+   Serial.print(z);
+  }
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK)  return -1;
+  
+  // found a match!
+  Serial.print("Found ID #"); Serial.print(finger.fingerID);
+  x=finger.fingerID; 
+  Serial.println(x);
+  delay(1000);
+ 
+  if ((x==1)&&(q==0))
+  {
+    lcd.clear();
+    lcd.print("chethan B gowda");
+     lcd.setCursor(0,1);
+    lcd.print("ID 4574445672348");
+delay(5000);
+    
+    
+    lcd.clear(); 
+  lcd.setCursor(0,0);
+  lcd.print("Banglore north");
+    q=1;
+    //Serial.begin(9600);
+   send_sms();
+   Serial.println(F("*A#"));
+   ctrl_z();
+   delay(5000);
+   
+  //Serial.println(F("Banglore north"));
+  delay(1000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+   lcd.print("1.BJP1 2.CONG1");
+   lcd.setCursor(0,1);
+   lcd.print("3.JDS1 4.NOTA1");
+ // Serial.println(F("1.BJP1 2.CONGRESS1 3.JDS1 4.NOTA1"));
+
+  
+    e=digitalRead(sw1);
+    f=digitalRead(sw2);
+    g=digitalRead(sw3);
+     h=digitalRead(sw4);
+
+     while((e==1)&&(f==1)&&(g==1)&&(h==1))
+     {
+      e=digitalRead(sw1);
+      f=digitalRead(sw2);
+      g=digitalRead(sw3);
+      h=digitalRead(sw4);
+     }
+     if(e==0)
+    {
+      lcd.clear();
+      //Serial.println(F("You voted for BJP1"));
+      lcd.print("You voted for");
+      lcd.setCursor(0,1);
+      lcd.print("       BJP1");
+      delay(10000);
+      a++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+      
+    }
+   else if(f==0)
+    { lcd.clear();
+      //Serial.println(F("You voted for cong1"));
+       lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     cong1");
+      b++;
+      buzzer_on();
+      lcd.clear();
+         return finger.fingerID;
+    }
+    else if(g==0)
+    {lcd.clear();
+     // Serial.println(F("You voted for jd1s"));
+       lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     jds1");
+      c++;
+     buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+  else if(h==0)
+    {lcd.clear();
+     // Serial.println(F(" You voted for NOTA"));
+       lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     NOTA1");
+      d++;
+      buzzer_on();
+      lcd.clear();
+     return finger.fingerID;
+    }
+  
+   
+}
+
+  else if ((x==2)&&(r==0))
+  {
+    lcd.clear();
+    lcd.print("  Akash S M");
+     lcd.setCursor(0,1);
+    lcd.print("ID 8452814565667");
+    delay(5000);
+    lcd.clear();
+    lcd.print("MANDYA ");
+    r=1;
+   // Serial.begin(9600);
+   send_sms();
+   Serial.println(F("*B#"));
+   ctrl_z();
+   delay(2000);
+ // Serial.println(F("Banglore South"));
+   
+   delay(1000);
+  //Serial.println(F("1.BJP2 2.CONGRESS2 3.JDS2 4.NOTA2"));
+   lcd.setCursor(0,0);
+    lcd.print("1.BJP2 2.CONG2");
+    lcd.setCursor(0,1);
+    lcd.print("3.JDS2 4.NOTA2");
+    e=digitalRead(sw1);
+    f=digitalRead(sw2);
+    g=digitalRead(sw3);
+    h=digitalRead(sw4);
+
+     while((e==1)||(f==1)||(g==1)||(h==1))
+     {
+       e=digitalRead(sw1);
+       f=digitalRead(sw2);
+       g=digitalRead(sw3);
+       h=digitalRead(sw4);
+     
+    if(e==0)
+    {
+      lcd.clear();
+     // Serial.println(F("You voted for BJP2"));
+         lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     BJP2");
+      i++;
+      buzzer_on();
+      lcd.clear();
+     return finger.fingerID;
+    }
+   else if(f==0)
+   
+    {
+      //Serial.println(F("You voted for cong2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     CONG2");
+      j++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+    else if(g==0)
+    {
+     // Serial.println(F("You voted for jds2"));
+      lcd.clear();
+       lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     JDS2");
+      k++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+  else if(h==0)
+    {
+    //  Serial.println(F("You voted for NOTA2"));
+      lcd.clear();
+       lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     NOTA2");
+      l++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+     }
+  }
+      else if ((x==3)&&(s==0))
+  {
+    lcd.clear();
+    lcd.print("  Karthik");
+     lcd.setCursor(0,1);
+    lcd.print("ID 4574676887658");
+    delay(5000);
+   
+    lcd.clear();
+    lcd.print("Hassan South");
+    s=1;
+   // Serial.begin(9600);
+  // send_sms();
+  // Serial.println(F("*C#"));
+  // ctrl_z();
+   delay(2000);
+   
+  //Serial.println(F("Banglore South"));
+  delay(2000);
+  lcd.clear();
+         lcd.setCursor(0,0);
+  lcd.print("1.BJP2 2.CONG2");
+   lcd.setCursor(0,1);
+    lcd.print("3.JDS2 4.NOTA2");
+ // Serial.println(F("1.BJP2 2.CONGRESS2 3.JDS2 4.NOTA2"));
+   e=digitalRead(sw1);
+   f=digitalRead(sw2);
+   g=digitalRead(sw3);
+   h=digitalRead(sw4);
+
+     while((e==1)||(f==1)||(g==1)||(h==1))
+     {
+       e=digitalRead(sw1);
+       f=digitalRead(sw2);
+       g=digitalRead(sw3);
+       h=digitalRead(sw4);
+     
+    if(e==0)
+    {
+   //   Serial.println(F("You voted for BJP2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     BJP2");
+      i++;
+      buzzer_on();
+      lcd.clear();
+     return finger.fingerID;
+    }
+   else if(f==0)
+    {
+     // Serial.println(F("You voted for cong2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     CONG2");
+      j++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+    else if(g==0)
+    {
+     // Serial.println(F("You voted for jds2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     JDS2");
+      k++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+  else if(h==0)
+    {
+     // Serial.println(F("You voted for NOTA2"));
+      lcd.clear();
+     lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     NOTA2");
+      l++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+     }
+  }
+   else if ((x==4)&&(t==0))
+  {
+    lcd.clear();
+    lcd.print("  chethan");
+     lcd.setCursor(0,1);
+    lcd.print("ID 1234276887658");
+    delay(10000);
+    lcd.clear();
+      lcd.print("Banglore north");
+    t=1;
+ //   Serial.begin(9600);
+   send_sms();
+   Serial.println("*D#");
+   ctrl_z();
+   delay(2000);
+    
+  //Serial.println(F("Banglore north"));
+ // Serial.println(F("1.BJP1 2.CONGRESS1 3.JDS1 4.NOTA1"));
+  delay(2000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("1.BJP1 2.CONG1");
+   lcd.setCursor(0,1);
+    lcd.print("3.JDS1 4.NOTA1");
+    e=digitalRead(sw1);
+   f=digitalRead(sw2);
+    g=digitalRead(sw3);
+     h=digitalRead(sw4);
+//     Serial.println(F(e));
+//     Serial.println(F(f);
+//     Serial.println(F(g);
+//     Serial.println(F(h);
+     while((e==1)||(f==1)||(g==1)||(h==1))
+     {
+       e=digitalRead(sw1);
+       f=digitalRead(sw2);
+       g=digitalRead(sw3);
+       h=digitalRead(sw4);
+     
+    if(e==0)
+    {
+     
+    //  Serial.println(F("You voted for BJP1"));
+      a++;
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("     BJP1");
+      a++;
+      buzzer_on();
+      lcd.clear();
+     return finger.fingerID;
+    }
+   else if(f==0)
+    {
+     // Serial.println(F("You voted for cong1"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    cong1");
+      b++;
+     buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+    else if(g==0)
+    {
+     // Serial.println(F("You voted for jds1"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    jds1");
+      c++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+  else if(h==0)
+    {
+     // Serial.println(F("You voted for NOTA1"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    NOTA1");
+      b++;
+      buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+     }
+  }
+   else if ((x==5)&&(u==0))
+  {
+    lcd.clear();
+    lcd.print("  Akash");
+     lcd.setCursor(0,1);
+    lcd.print("ID 9865476887658");
+    delay(10000);
+     lcd.clear();
+      lcd.print("Banglore South");
+    u=1;
+   // Serial.begin(9600);
+   send_sms();
+   Serial.println("*E#");
+   ctrl_z();
+   delay(2000);
+   
+ // Serial.println(F("Banglore South"));
+  delay(1000);
+ // Serial.println(F("1.BJP2 2.CONGRESS2 3.JDS2 4.NOTA2"));
+   lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("1.BJP2 2.CONG2");
+   lcd.setCursor(0,1);
+    lcd.print("3.JDS2 4.NOTA2");
+    delay(1500);
+    e=digitalRead(sw1);
+    f=digitalRead(sw2);
+    g=digitalRead(sw3);
+     h=digitalRead(sw4);
+
+     while((e==1)||(f==1)||(g==1)||(h==1))
+     {
+       e=digitalRead(sw1);
+       f=digitalRead(sw2);
+       g=digitalRead(sw3);
+       h=digitalRead(sw4);
+     
+    if(e==0)
+    {
+      Serial.println(F("You voted for BJP2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    BJP2");
+      b++;
+      buzzer_on();
+      lcd.clear();
+     return finger.fingerID;
+    }
+   else if(f==0)
+    {
+      
+     // Serial.println(F("You voted for cong2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    cong2");
+      j++;
+     buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+    else if(g==0)
+    {
+     // Serial.println(F("You voted for jds2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("   jds2");
+      k++;
+       buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+  else if(h==0)
+    {
+     // Serial.println(F("You voted for NOTA2"));
+      lcd.clear();
+      lcd.print(" You voted for");
+       lcd.setCursor(0,1);
+      lcd.print("    NOTA2");
+      l++;
+       buzzer_on();
+      lcd.clear();
+      return finger.fingerID;
+    }
+     }
+  }
+  if(x==6)
+  {
+    lcd.clear();
+    lcd.print("Sending result");
+    delay(1000);
+    send_result();
+     iot();
+     delay(10000);
+     iot2();
+    
+  }
+ else
+  {  
+     lcd.clear();
+      lcd.print("   You already");
+      lcd.setCursor(0,1);
+      lcd.print("     voted");
+       digitalWrite(buzzer, HIGH);
+   delay(1000);
+   digitalWrite(buzzer, LOW);
+   delay(500);
+   digitalWrite(buzzer, HIGH);
+   delay(1000);
+   digitalWrite(buzzer, LOW);
+    //Serial.println(F("You already voted"));
+    delay(2000);
+     lcd.clear();
+   }  
+   
+  //Serial.print(" with confidence of "); Serial.println(F(finger.confidence);
+  return finger.fingerID; 
+}
+
+void check()
+{
+   if(!(strncmp(str,"A",1)))
+   {
+      q=1;
+    }  
+   
+   else if(!(strncmp(str,"B",1)))
+    {
+      r=1;
+    }
+
+  if(!(strncmp(str,"C",1)))
+   {
+      s=1;
+   }  
+   if(!(strncmp(str,"D",1)))
+   {
+      t=1;
+   } 
+else if(!(strncmp(str,"E",1)))
+  {     u=1;
+  }
+}
+
+
+void wifi_init()
+{
+  Serial.begin(115200);
+  delay(2000);
+  Serial.println("AT");
+  delay(2000);
+  Serial.println("AT+CWMODE=1");
+  delay(2000);
+  Serial.println("AT+CWLAP");
+  delay(2000);  delay(2000);  delay(2000);
+  //Serial.println("AT+CWJAP=\"epark\",\"dontaskpassword\"\r\n");
+  Serial.println("AT+CWJAP=\"Santhu\",\"dontaskpassword\"\r\n");
+  delay(2000);
+}
+
+void iot()
+{
+    Serial.println("uploaded");
+  String temp="GET https://184.106.153.149/update?api_key=17M9QJVINBYVD6FR&field1=";
+                          //   temp+=String(sensorValue1);
+                             temp+=String(a);
+                             temp+="&field2=";
+                             temp+=String(b);
+                             temp+="&field3=";
+                             temp+=String(c);
+                             temp+="&field4=";
+                             temp+=String(d);
+                             temp+="&field5=";
+                             temp+=String(i);
+                             temp+="&field6=";
+                             temp+=String(j);
+                             temp+="&field7=";
+                             temp+=String(k);
+                             temp+="&field8=";
+                             temp+=String(l);
+                             temp+="\r\n";
+                             Serial.println("AT+CIPSTART=\"TCP\",\"184.106.153.149\",80\r\n");
+                      delay(2000);
+                      //Serial.println("AT+CIPSEND=0,"+String(temp.length()));
+                      Serial.println("AT+CIPSEND="+String(temp.length()));
+                      Serial.println("\r\n");
+                     
+                      //Serial.println("AT+CIPSEND=87\r\n");
+                      delay(2000);
+                      Serial.println(temp);
+                      //Serial.println("GET https://184.106.153.149/update?api_key=9FUQ5PCW9XIL6A2G&field1=70&field2=90\r\n");
+                      //Serial.print("GET https://184.106.153.149/update?api_key=9FUQ5PCW9XIL6A2G&field1=");
+                      //Serial.print(temp);
+                       Serial.print("\r\n");
+                      delay(2000);
+                      Serial.println("\r\n\r\n\r\n\r\n\r\n\r\n");
+                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                       delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                       delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+                     // temp='0';
+                       lcd.print("SENT TO CLOUD");
+                       Serial.println("uploaded");
+      
+}
+
+//==============================================================IOT2===================================================//
+
+void iot2()
+{
+    Serial.println("uploaded");
+  String temp="GET https://184.106.153.149/update?api_key=TPZQ411HPN8NM73M&field1=";
+                          //   temp+=String(sensorValue1);
+                             temp+=String(q);
+                             temp+="&field2=";
+                             temp+=String(r);
+                             temp+="&field3=";
+                             temp+=String(s);
+                             temp+="&field4=";
+                             temp+=String(t);
+                             temp+="&field5=";
+                             temp+=String(u);
+//                             temp+="&field6=";
+//                             temp+=String(j);
+//                             temp+="&field7=";
+//                             temp+=String(k);
+//                             temp+="&field8=";
+//                             temp+=String(l);
+                             temp+="\r\n";
+                             Serial.println("AT+CIPSTART=\"TCP\",\"184.106.153.149\",80\r\n");
+                      delay(2000);
+                      //Serial.println("AT+CIPSEND=0,"+String(temp.length()));
+                      Serial.println("AT+CIPSEND="+String(temp.length()));
+                      Serial.println("\r\n");
+                     
+                      //Serial.println("AT+CIPSEND=87\r\n");
+                      delay(2000);
+                      Serial.println(temp);
+                      //Serial.println("GET https://184.106.153.149/update?api_key=9FUQ5PCW9XIL6A2G&field1=70&field2=90\r\n");
+                      //Serial.print("GET https://184.106.153.149/update?api_key=9FUQ5PCW9XIL6A2G&field1=");
+                      //Serial.print(temp);
+                       Serial.print("\r\n");
+                      delay(2000);
+                      Serial.println("\r\n\r\n\r\n\r\n\r\n\r\n");
+                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                       delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                       delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+//                      delay(2000);
+                     // temp='0';
+                       lcd.print("SENT TO CLOUD");
+                       Serial.println("uploaded");
+      
+}
+
+
+//============================================================================================//
+
+
+void send_sms()
+{
+//  Serial.begin(9600);
+//  delay(500);
+//  Serial.println(F("AT+CMGF=1\r\n"));
+//  delay(1000);                                 
+//  //Serial.println("AT+CMGS=\"9742274413\"\r\n");
+//  //Serial.println("AT+CMGS=\"8105872023\"\r\n");                             //Change ph number here
+//  //Serial.println("AT+CMGS=\"8105872023\"\r\n");
+//  Serial.println(F("AT+CMGS=\"9741960590\"\r\n"));
+//  //Serial.println("AT+CMGS=\"9538894033\"\r\n");
+//  delay(1000);
+}
+
+
+void ctrl_z()
+{
+  // Serial.println((char)26);
+   //Serial.write(0x0A);
+   //Serial.write(0x1A);
+}
+
+
+void send_result()
+{
+  //char result;
+
+ // delay(1500);
+//  Serial.println(F("AT+CMGF=1\r\n"));
+//  delay(1000);
+//  Serial.println(F("AT+CMGS=\"9741960590\"\r\n"));          //central stn number
+//  //Serial.println("AT+CMGS=\"8105872023\"\r\n");
+//  delay(1000);
+ // Serial.println("*STN1");
+  //Serial.println(String("")+"BJP1="+a+",Congress1="+b+",jds1="+c+",NOTA1="+d+"");
+  //Serial.println(String("")+"BJP2="+i+",Congress1="+j+",jds1="+k+",NOTA1="+l+"");
+//  ctrl_z();
+//   delay(7000);
+//   Serial.println(F("AT+CMGF=1\r\n"));
+//  delay(1000);
+//  //Serial.println("AT+CMGS=\"8105872023\"\r\n");
+//  Serial.println(F("AT+CMGS=\"9741960590\"\r\n"));         //central stn number
+//  delay(1000);
+// Serial.println(F("*SMS1"));
+// if(q==1)
+//  {
+//    Serial.println(F("A is voted"));
+//  }
+//  else
+// {
+//    Serial.println(F("A is not voted"));
+//  }
+//   if(r==1)
+//  {
+//    Serial.println(F("B is voted"));
+// }
+// else
+// {
+//Serial.println("B is not voted");
+//  }
+//  if(s==1)
+//  {
+//    Serial.println(F("C is voted"));
+//  }
+//  else
+//  {
+//    Serial.println(F("C is not voted"));
+//  } 
+//  if(t==1)
+//  {
+//    Serial.println(F("D is voted"));
+//  }
+//  else
+//  {
+//    Serial.println(F("D is not voted"));
+//  }
+//  if(u==1)
+//  {
+//    Serial.println(F("E is voted"));
+// }
+// else
+// {
+//   Serial.println(F("E is not voted"));
+// }
+//ctrl_z();
+// delay(6000);
+  
+}
+
+
+
+void buzzer_on()
+{
+  digitalWrite(buzzer,1);
+  delay(3000);
+  digitalWrite(buzzer,0);
+}
